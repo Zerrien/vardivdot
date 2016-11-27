@@ -1,0 +1,163 @@
+<html>
+	<head>
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				width: 75%;
+				margin: auto;
+				position: relative;
+
+				background-color: #444444;
+			}
+			#header {
+				width: calc(100% - 16px);
+				height: calc(128px - 16px);
+				font-family: monospace;
+				font-size: xx-large;
+				border:1px solid black;
+				border-radius: 8px;
+				box-sizing:border-box;
+				margin: 8px;
+				padding: 8px;
+				background-color:#222222;
+				color:white;
+				position: relative;
+			}
+			#headerIcon {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			#sideBar {
+				width: calc(256px - 16px - 16px);
+				right: 0;
+				position:absolute;
+				background-color:#222222;
+				border:1px solid black;
+				border-radius: 8px;
+				box-sizing:border-box;
+				margin: 8px;
+				padding: 8px;
+			}
+			#content {
+				width: calc(100% - 256px);
+				position: absolute;
+				background-color:#222222;
+				border:1px solid black;
+				border-radius: 8px;
+				box-sizing:border-box;
+				margin: 8px;
+				padding: 8px;
+			}
+			.blogPost {
+				border: 1px solid black;
+				box-sizing:border-box;
+				height: 64px;
+				overflow:hidden;
+				margin:4px;
+				padding: 4px;
+				border-radius: 8px;
+
+				transition: 0.1s;
+				cursor:pointer;
+				background-color:#333333;
+			}
+			.blogPost:hover {
+				transform: scale(1.05);
+			}
+			.blogTitle {
+				font-family: sans-serif;
+				font-size: large;
+			}
+			.infoArea {
+				width: calc(64px - 9px);
+				height: calc(64px - 9px);
+				float:left;
+				font-family: sans-serif;
+				text-align: center;
+			}
+			.postArea {
+				float:right;
+				width:calc(100% - 64px);
+			}
+			input {
+				width: calc(100%);
+			}
+			a {
+				color: green;
+			}
+			a:active {
+				color: color: rgba(255, 255, 255, 1);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<div id="headerIcon" style="width: 100px">
+				<div>
+					var
+				</div>
+				<div>
+					&lt;div&gt;
+				</div>
+				<div>
+					.dot
+				</div>
+			</div>
+			<div id="navBar" style="position: absolute; left: calc(100px + 8px);bottom: 8px;width: calc(100% - 100px - 16px);text-align: center">
+				<a href="#blog">Blog</a> •
+				<a href="#projects">Projects</a>
+			</div>
+		</div>
+		<div id="sideBar">
+			<div>
+				<input type="" name=""> Search
+			</div>
+			<div>
+				<input type="" name=""> Subscribe
+			</div>
+			<div>
+				<div>
+					The Best
+				</div>
+				<div>
+					<div>
+						A
+					</div>
+					<div>
+						B
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="content">
+			<div style="color:white;font-family: monospace;font-size:xx-large">
+				Blog
+			</div>
+			<div class="blogPost">
+				<div class="infoArea">
+					<div class="blogDate">
+						Nov 3
+					</div>
+					<div class="blogYear">
+						2016
+					</div>
+					<div class="readUnread">
+						Unread
+					</div>
+				</div>
+				<div class="postArea">
+					<div class="blogTitle">
+						This is a particularly long blog title
+					</div>
+					<div class="blogSummary">
+						Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. 
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
