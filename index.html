@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
 <html>
 	<head>
 		<style>
@@ -6,7 +8,8 @@
 				margin: 0;
 			}
 			body {
-				width: 75%;
+				min-width: 800px;
+				width: 50%;
 				margin: auto;
 				position: relative;
 
@@ -31,6 +34,11 @@
 				flex-direction: column;
 				justify-content: center;
 			}
+			.contentHeader {
+				color: white;
+				font-family: monospace;
+				font-size: xx-large;
+			}
 			#sideBar {
 				width: calc(256px - 16px - 16px);
 				right: 0;
@@ -43,6 +51,8 @@
 				padding: 8px;
 			}
 			#content {
+				color: white;
+
 				width: calc(100% - 256px);
 				position: absolute;
 				background-color:#222222;
@@ -83,6 +93,12 @@
 				float:right;
 				width:calc(100% - 64px);
 			}
+			.loader {
+				width: 32px;
+				height: 32px;
+				background-color:red;
+				margin: auto;
+			}
 			input {
 				width: calc(100%);
 			}
@@ -93,6 +109,193 @@
 				color: color: rgba(255, 255, 255, 1);
 			}
 		</style>
+		<script>
+			/*
+			var i = 0;
+			window.onhashchange = function(a) {
+				var fullHash = window.location.hash;
+				var dest = fullHash.substring(1, fullHash.length);
+				history.replaceState(undefined, undefined, dest + ".html");
+				changeContent(fetch("./a.html"));
+			}
+			function changeContent(fetchPromise) {
+				var contentDiv = document.getElementById("content");
+				contentDiv.innerHTML = '';
+				var loader = document.createElement("div");
+				loader.className = "loader"
+				contentDiv.append(loader);
+				fetchPromise.then(function(a) {
+					console.log("???", a);
+					var reader = a.body.getReader();
+					var bytesReceived = 0;
+					var decoder = new TextDecoder();
+					reader.read().then(function processResult(result) {
+						if(result.done) {
+							return;
+						}
+						bytesReceived += result.value.length;
+						console.log(result.value);
+						console.log(decoder.decode(result.value, {stream:true}))
+						console.log("recieved", bytesReceived);
+						return reader.read().then(processResult);
+					})
+				});
+			}
+			*/
+			window.onhashchange = renderPage;
+			window.onload = renderPage;
+			function renderPage() {
+				var hash = window.location.hash;
+				var path = hash.substring(1, hash.length);
+				if(path === "") {
+					path = "blog";
+				}
+				var prom = fetch(path + ".mk");
+				prom.then(function(data) {
+					if(data.status === 404) {
+						console.error("404'd a fetch", data.url);
+						return;
+					}
+					var reader = data.body.getReader();
+					var decoder = new TextDecoder();
+					var decoded = "";
+					reader.read().then(function processResult(result) {
+						if(result.done) {
+							renderMake(decoded);
+							return;
+						}
+						decoded += decoder.decode(result.value, {stream:true});
+						return reader.read().then(processResult);
+					});
+					console.log(data);
+				});
+			}
+			function renderMake(make) {
+				var contentDiv = document.getElementById("content");
+				var lines = make.split("\n");
+				var depth = [];
+				var _variables = {realm: {thing: [this], index: 0}};
+				var isLooping = false;
+				var loopLine = null;
+				var panicIndex = 0;
+				var realm = this;
+				for(var i = 0; i < lines.length; i++) {
+					if(panicIndex++ > 100) {
+						console.log("overflow");
+						break;
+					}
+					var line = lines[i];
+					var tabs = 0;
+					while(line[tabs] === "\t") {
+						tabs++;
+					}
+					line = line.substring(tabs, line.length);
+					while(depth.length > tabs) {
+						depth.pop();
+					}
+					if(line.search(/^for/) !== -1) {
+						var div = document.createElement("div");
+						if(depth.length === 0) {
+							contentDiv.appendChild(div);
+						} else {
+							depth[depth.length - 1].appendChild(div);
+						}
+						depth.push(div);
+						var lineSplit = line.split(" ");
+						var varName = lineSplit[1];
+						lineSplit.splice(0, 3);
+						isLooping = true;
+						loopLine = i;
+						if(!_variables[varName]) {
+							_variables[varName] = {
+								thing: eval(lineSplit.join(" ")),
+								index: 0
+							};
+						} else {
+							if(++_variables[varName].index >= _variables[varName].thing.length) {
+								isLooping = false;
+								break;
+							}
+						}
+					} else {
+						var nextLine = lines[i + 1];
+						if(isLooping && !nextLine) {
+							i = loopLine - 1;
+						}
+						var varObj = {};
+						for(var key in _variables) {
+							varObj[key] = _variables[key].thing[_variables[key].index];
+						}
+						var div = renderLine.bind(varObj)(line);
+
+						if(depth.length === 0) {
+							contentDiv.appendChild(div);
+						} else {
+							depth[depth.length - 1].appendChild(div);
+						}
+						depth.push(div);
+					}
+				}
+			}
+			function isRead(blog) {
+				//console.log(blog);
+				return "Unread";
+			}
+			function getBlogPosts() {
+				/*
+				.blogDate blog.date
+					.blogYear blog.year
+					.readUnread realm.isRead(blog)
+				.postArea
+					.blogTitle blog.title
+					.blogSummary blog.summary
+				*/
+				return [
+					{
+						date: "Nov 3",
+						year: "1990",
+						title: "Awesome title, bro",
+						summary: "Good stuff here.",
+					},
+					{
+						date: "Nov 4",
+						year: "1990",
+						title: "Another great title, bro",
+						summary: "Excellent stuff here.",
+					},
+					{
+						date: "Nov 5",
+						year: "1990",
+						title: "Yo.",
+						summary: "Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, Long desc, "
+					}
+				]
+			}
+			function renderLine(line) {
+				var div = document.createElement("div");
+				var content = line.split(" ");
+				var styleList = content.shift();
+				content = content.join(" ");
+				if(content !== "") {
+					/*
+					var things = content.find(/\$\{.*\}/);
+					console.log(things);
+					*/
+					var regexp = /\$\{.*?\}/g;
+					var matches = [];
+					var match;
+					while((match = regexp.exec(content)) !== null) {
+						var result = match[0].substring(2, match[0].length - 1);
+						content = content.replace(match[0], eval(result));
+					}
+					div.innerHTML = content;
+				}
+
+				var classes = styleList.split(".").filter(function(elem) {return elem !== ""});
+				div.className = classes.join(" ");
+				return div;
+			}
+		</script>
 	</head>
 	<body>
 		<div id="header">
@@ -134,30 +337,6 @@
 			</div>
 		</div>
 		<div id="content">
-			<div style="color:white;font-family: monospace;font-size:xx-large">
-				Blog
-			</div>
-			<div class="blogPost">
-				<div class="infoArea">
-					<div class="blogDate">
-						Nov 3
-					</div>
-					<div class="blogYear">
-						2016
-					</div>
-					<div class="readUnread">
-						Unread
-					</div>
-				</div>
-				<div class="postArea">
-					<div class="blogTitle">
-						This is a particularly long blog title
-					</div>
-					<div class="blogSummary">
-						Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. Blog summary. 
-					</div>
-				</div>
-			</div>
 		</div>
 	</body>
 </html>
